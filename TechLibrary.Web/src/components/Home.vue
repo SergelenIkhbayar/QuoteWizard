@@ -1,8 +1,6 @@
 <template>
     <div class="home">
-        <h1>{{ msg }}</h1>
-
-        <b-table striped hover :items="dataContext" :fields="fields" responsive="sm">
+        <b-table striped hover :items="GetWithPagination" :fields="fields" responsive="sm" id="table" :current-page="currentPage">
             <template v-slot:cell(thumbnailUrl)="data">
                 <b-img :src="data.value" thumbnail fluid></b-img>
             </template>
@@ -10,6 +8,9 @@
                 <b-link :to="{ name: 'book_view', params: { 'id' : data.item.bookId } }">{{ data.item.title }}</b-link>
             </template>
         </b-table>
+        <b-pagination v-model="currentPage" :total-rows="pagination"></b-pagination>
+
+        <p class="mt-3">Current Page: {{ currentPage }}</p>
     </div>
 </template>
 
@@ -18,9 +19,7 @@
 
     export default {
         name: 'Home',
-        props: {
-            msg: String
-        },
+        props: {},
         data: () => ({
             fields: [
                 { key: 'thumbnailUrl', label: 'Book Image' },
@@ -29,16 +28,27 @@
                 { key: 'descr', label: 'Description', sortable: true, sortDirection: 'desc' }
 
             ],
-            items: []
+            items: [],
+            currentPage: 1,
+            pagination: 0
         }),
-        
         methods: {
-            dataContext(ctx, callback) {
-                axios.get("https://localhost:5001/books")
+            GetWithPagination(ctx, callback) {
+                axios.get('https://localhost:5001/books/pagination/' + this.currentPage)
                     .then(response => {
-                        
                         callback(response.data);
                     });
+            }
+        },
+        watch: {
+            initialize: {
+                immediate: true,
+                handler() {
+                    axios.get('https://localhost:5001/books/pagination')
+                        .then(response => {
+                            this.pagination = response.data;
+                        });
+                }
             }
         }
     };
@@ -47,4 +57,3 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>
-

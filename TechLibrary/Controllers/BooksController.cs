@@ -48,15 +48,24 @@ namespace TechLibrary.Controllers
             return Ok(bookResponse);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("pagination")]
+        public async Task<IActionResult> GetPaginationLength()
+        {
+            _logger.LogInformation("Get all book's length");
+
+            var books = await _bookService.GetBooksAsync();
+
+            return Ok(books.Count);
+        }
+
+        [HttpGet("pagination/{pageNumber}")]
         public async Task<IActionResult> GetWithPagination(int pageNumber)
         {
             _logger.LogInformation($"Get book by pagination: {pageNumber}");
 
-            var book = await _bookService.GetBooksAsync();
-            book.GetRange(pageNumber, 10);
+            var books = await _bookService.GetBookByPageNumberAsync(pageNumber);
 
-            var bookResponse = _mapper.Map<BookResponse>(book);
+            var bookResponse = _mapper.Map<List<BookResponse>>(books);
 
             return Ok(bookResponse);
         }

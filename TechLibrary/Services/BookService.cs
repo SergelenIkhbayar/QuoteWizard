@@ -13,6 +13,7 @@ namespace TechLibrary.Services
     {
         Task<List<Book>> GetBooksAsync();
         Task<Book> GetBookByIdAsync(int bookid);
+        Task<List<Book>> GetBookByPageNumberAsync(int pageNumbers);
     }
 
     public class BookService : IBookService
@@ -34,6 +35,11 @@ namespace TechLibrary.Services
         public async Task<Book> GetBookByIdAsync(int bookid)
         {
             return await _dataContext.Books.SingleOrDefaultAsync(x => x.BookId == bookid);
+        }
+
+        public async Task<List<Book>> GetBookByPageNumberAsync(int pageNumber)
+        {
+            return await _dataContext.Books.Skip((pageNumber - 1) * 10).Take(10).ToListAsync();
         }
     }
 }

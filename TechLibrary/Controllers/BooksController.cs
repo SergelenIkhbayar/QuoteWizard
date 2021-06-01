@@ -49,7 +49,7 @@ namespace TechLibrary.Controllers
         }
 
         [HttpGet("pagination")]
-        public async Task<IActionResult> GetPaginationLength()
+        public async Task<IActionResult> Pagination(int pageNumber, string searchValue)
         {
             _logger.LogInformation("Get all book's length");
 
@@ -64,6 +64,18 @@ namespace TechLibrary.Controllers
             _logger.LogInformation($"Get book by pagination: {pageNumber}");
 
             var books = await _bookService.GetBookByPageNumberAsync(pageNumber);
+
+            var bookResponse = _mapper.Map<List<BookResponse>>(books);
+
+            return Ok(bookResponse);
+        }
+
+        [HttpGet("pagination/{searchString}")]
+        public async Task<IActionResult> Search(string searchString)
+        {
+            _logger.LogInformation($"Search book by string: {searchString}");
+
+            var books = await _bookService.GetBooksAsync();
 
             var bookResponse = _mapper.Map<List<BookResponse>>(books);
 

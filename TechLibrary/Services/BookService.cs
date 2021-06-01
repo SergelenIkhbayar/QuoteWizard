@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TechLibrary.Contracts.Responses;
 using TechLibrary.Data;
 using TechLibrary.Domain;
 using TechLibrary.Models;
@@ -13,16 +15,18 @@ namespace TechLibrary.Services
     {
         Task<List<Book>> GetBooksAsync();
         Task<Book> GetBookByIdAsync(int bookid);
-        Task<List<Book>> GetBookByPageNumberAsync(int pageNumbers);
+        Task<PaginationResponse> PaginationAsync(int pageNumber, bool isTitle, string searchString);
     }
 
     public class BookService : IBookService
     {
         private readonly DataContext _dataContext;
+        private readonly IMapper _mapper;
 
-        public BookService(DataContext dataContext)
+        public BookService(DataContext dataContext, IMapper mapper)
         {
             _dataContext = dataContext;
+            _mapper = mapper;
         }
 
         public async Task<List<Book>> GetBooksAsync()
@@ -37,9 +41,18 @@ namespace TechLibrary.Services
             return await _dataContext.Books.SingleOrDefaultAsync(x => x.BookId == bookid);
         }
 
-        public async Task<List<Book>> GetBookByPageNumberAsync(int pageNumber)
+        public async Task<PaginationResponse> PaginationAsync(int pageNumber, bool isTitle = false, string searchString = null)
         {
-            return await _dataContext.Books.Skip((pageNumber - 1) * 10).Take(10).ToListAsync();
+            var queryable = _dataContext.Books.AsQueryable();
+            if (string.IsNullOrEmpty(searchString))
+            {
+                queryable = isTitle
+                    ? queryable.Where(_ => _.Title.Contains(searchString)) 
+                    : queryable.Where(_ => _.ShortDescr.Contains(searchString));
+            }
+            var books = await queryable.Skip((pageNumber - 1) * 10).Take(10).ToListAsync();
+            var bookResponses = _mapper.Map<List<BookResponse>>(books);
+            return new PaginationResponse(pageNumber, books.Count(), bookResponses);
         }
     }
 }

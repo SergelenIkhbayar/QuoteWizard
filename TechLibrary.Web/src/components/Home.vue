@@ -1,16 +1,36 @@
 <template>
     <div class="home">
-        <b-table striped hover :items="GetWithPagination" :fields="fields" responsive="sm" id="table" :current-page="currentPage">
-            <template v-slot:cell(thumbnailUrl)="data">
-                <b-img :src="data.value" thumbnail fluid></b-img>
-            </template>
-            <template v-slot:cell(title_link)="data">
-                <b-link :to="{ name: 'book_view', params: { 'id' : data.item.bookId } }">{{ data.item.title }}</b-link>
-            </template>
-        </b-table>
-        <b-pagination v-model="currentPage" :total-rows="pagination"></b-pagination>
+            <b-col lg="6" class="my-1">
+                <b-form-group label="Filter"
+                              label-for="filter-input"
+                              label-cols-sm="3"
+                              label-align-sm="right"
+                              label-size="sm"
+                              class="mb-0">
+                    <b-input-group size="sm">
+                        <b-form-input id="filter-input"
+                                      v-model="filter"
+                                      type="search"
+                                      placeholder="Type to Search"></b-form-input>
 
-        <p class="mt-3">Current Page: {{ currentPage }}</p>
+                        <b-input-group-append>
+                            <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+
+            <b-table striped hover :items="GetWithPagination" :fields="fields" responsive="sm" id="table" :current-page="currentPage">
+                <template v-slot:cell(thumbnailUrl)="data">
+                    <b-img :src="data.value" thumbnail fluid></b-img>
+                </template>
+                <template v-slot:cell(title_link)="data">
+                    <b-link :to="{ name: 'book_view', params: { 'id' : data.item.bookId } }">{{ data.item.title }}</b-link>
+                </template>
+            </b-table>
+            <b-pagination v-model="currentPage" :total-rows="pagination"></b-pagination>
+
+            <p class="mt-3">Current Page: {{ currentPage }}</p>
     </div>
 </template>
 

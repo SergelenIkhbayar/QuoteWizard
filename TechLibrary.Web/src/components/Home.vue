@@ -1,17 +1,27 @@
 <template>
     <div class="home">
-        <b-col lg="6" class="my-1">
-            <b-input-group size="sm">
-                <b-form-input id="search-input"
-                              v-model="searchValue"
-                              type="search"
-                              placeholder="Search books"></b-form-input>
-
-                <b-input-group-append>
-                    <b-button :disabled="!searchValue" @click="searchValue = ''">Clear</b-button>
-                </b-input-group-append>
-            </b-input-group>
-        </b-col>
+        <b-container>
+            <b-row>
+                <b-col>
+                    <b-input-group size="sm">
+                        <b-form-input id="search-input"
+                                      v-model="searchValue"
+                                      type="search"
+                                      placeholder="Search books"></b-form-input>
+                        <b-input-group-append>
+                            <b-button :disabled="!searchValue" @click="searchValue = ''">Clear</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </b-col>
+                <b-col>
+                    <b-form-radio-group v-model="isTitle"
+                                        :options="searchOptions"
+                                        value-field="value"
+                                        text-field="desc">
+                    </b-form-radio-group>
+                </b-col>
+            </b-row>
+        </b-container>
 
         <b-table striped hover :items="items" :fields="fields" responsive="sm" id="table" :current-page="pageNumber">
             <template v-slot:cell(thumbnailUrl)="data">
@@ -46,15 +56,14 @@
             perPage: 10,
 
             isTitle: true,
+            searchOptions: [
+                { value: true, desc: "Title" },
+                { value: false, desc: "Description" }
+            ],
             searchValue: null
         }),
         created: function () {
             this.fetchBooks();
-        },
-        mounted() {
-            this.fetchBooks.catch(error => {
-                console.log(`Error encountered during fetch books: ${error}`);
-            });
         },
         methods: {
             async fetchBooks() {
@@ -74,6 +83,13 @@
         },
         watch: {
             pageNumber: {
+                handler: function () {
+                    this.fetchBooks().catch(error => {
+                        console.error(error)
+                    })
+                }
+            },
+            isTitle: {
                 handler: function () {
                     this.fetchBooks().catch(error => {
                         console.error(error)

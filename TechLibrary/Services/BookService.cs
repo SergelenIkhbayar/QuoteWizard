@@ -50,7 +50,7 @@ namespace TechLibrary.Services
                     ? queryable.Where(_ => _.Title.ToLower().Contains(searchString.ToLower()))
                     : queryable.Where(_ => _.ShortDescr.ToLower().Contains(searchString.ToLower()));
             }
-            var totalBooks = await queryable.ToListAsync();
+            var totalBooks = await queryable.OrderBy(_ => _.BookId).ToListAsync();
             var books = totalBooks.Skip((pageNumber - 1) * 10).Take(10).ToList();
             var bookResponses = _mapper.Map<List<BookResponse>>(books);
             return new PaginationResponse(pageNumber, totalBooks.Count(), bookResponses);

@@ -48,38 +48,21 @@ namespace TechLibrary.Controllers
             return Ok(bookResponse);
         }
 
-        [HttpGet("pagination")]
-        public async Task<IActionResult> Pagination(int pageNumber, string searchValue)
+        [HttpPost]
+        public async Task<IActionResult> Pagination(PaginationRequest paginationRequest)
         {
-            _logger.LogInformation("Get all book's length");
+            _logger.LogInformation($"Post pagination by pageNumber: {paginationRequest.PageNumber}, " +
+                $"IsTitle: {paginationRequest.IsTitle} and searchValue: {paginationRequest.SearchValue}");
 
-            var books = await _bookService.GetBooksAsync();
-
-            return Ok(books.Count);
+            var paginationResponse = await _bookService.PaginationAsync(paginationRequest.PageNumber, paginationRequest.IsTitle, paginationRequest.SearchValue);
+            return Ok(paginationResponse);
         }
+    }
 
-        [HttpGet("pagination/{pageNumber}")]
-        public async Task<IActionResult> GetWithPagination(int pageNumber)
-        {
-            _logger.LogInformation($"Get book by pagination: {pageNumber}");
-
-            var books = await _bookService.GetBookByPageNumberAsync(pageNumber);
-
-            var bookResponse = _mapper.Map<List<BookResponse>>(books);
-
-            return Ok(bookResponse);
-        }
-
-        [HttpGet("pagination/{searchString}")]
-        public async Task<IActionResult> Search(string searchString)
-        {
-            _logger.LogInformation($"Search book by string: {searchString}");
-
-            var books = await _bookService.GetBooksAsync();
-
-            var bookResponse = _mapper.Map<List<BookResponse>>(books);
-
-            return Ok(bookResponse);
-        }
+    public class PaginationRequest
+    {
+        public int PageNumber { get; set; }
+        public bool IsTitle { get; set; }
+        public string SearchValue { get; set; }
     }
 }

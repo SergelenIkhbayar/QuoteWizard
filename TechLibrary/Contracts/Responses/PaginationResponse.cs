@@ -8,15 +8,15 @@ namespace TechLibrary.Contracts.Responses
 {
     public class PaginationResponse
     {
-        public PaginationResponse(int currentPage, int totalPage, List<BookResponse> bookResponses)
+        public PaginationResponse(int pageNumber, int pagination, List<BookResponse> bookResponses)
         {
-            CurrentPage = currentPage;
-            TotalPage = totalPage;
+            PageNumber = pageNumber;
+            Pagination = pagination;
             BookResponses = bookResponses;
         }
 
-        public int CurrentPage { get; set; }
-        public int TotalPage { get; set; }
+        public int PageNumber { get; set; }
+        public int Pagination { get; set; }
         public List<BookResponse> BookResponses { get; set; }        
     }
 }

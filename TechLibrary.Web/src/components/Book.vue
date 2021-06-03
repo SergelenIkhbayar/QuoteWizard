@@ -48,8 +48,7 @@
                           label-for="input-thumbnailUrl">
                 <b-form-input id="input-thumbnailUrl"
                               v-model="thumbnailUrl"
-                              placeholder="Enter Thumbnail Url"
-                              required></b-form-input>
+                              placeholder="Enter Thumbnail Url"></b-form-input>
             </b-form-group>
 
             <b-form-group id="input-group-shortDesc"
@@ -57,8 +56,7 @@
                           label-for="input-shortDesc">
                 <b-form-input id="input-shortDesc"
                               v-model="shortDesc"
-                              placeholder="Enter short description of the book"
-                              required></b-form-input>
+                              placeholder="Enter short description of the book"></b-form-input>
             </b-form-group>
 
             <b-form-group id="input-group-longDesc"
@@ -95,17 +93,22 @@
             longDesc: null
         }),
         mounted() {
-            axios.get(`https://localhost:5001/books/${this.id}`)
-                .then(response => {
-                    this.isEditMode = false;
+            if (this.id) {
+                axios.get(`https://localhost:5001/books/${this.id}`)
+                    .then(response => {
+                        this.isEditMode = false;
 
-                    this.bookId = response.data.bookId;
-                    this.title = response.data.title;
-                    this.isbn = response.data.isbn;
-                    this.publishedDate = response.data.publishedDate;
-                    this.thumbnailUrl = response.data.thumbnailUrl;
-                    this.shortDesc = response.data.descr;
-                });
+                        this.bookId = response.data.bookId;
+                        this.title = response.data.title;
+                        this.isbn = response.data.isbn;
+                        this.publishedDate = response.data.publishedDate;
+                        this.thumbnailUrl = response.data.thumbnailUrl;
+                        this.shortDesc = response.data.descr;
+                    });
+            }
+            else {
+                this.isEditMode = true;
+            }
         },
         methods: {
             async onSubmit(event) {

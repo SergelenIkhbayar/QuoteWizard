@@ -20,6 +20,9 @@
                                         text-field="desc">
                     </b-form-radio-group>
                 </b-col>
+                <b-col>
+                    <b-button class="float-right" variant="primary" :to="{ name: 'book_view' }">Add new book</b-button>
+                </b-col>
             </b-row>
         </b-container>
 

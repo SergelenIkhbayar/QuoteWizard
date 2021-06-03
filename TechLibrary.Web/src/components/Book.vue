@@ -16,6 +16,12 @@
         </b-card>
     </div>
     <div v-else>
+        <div v-if="bookId == -1">
+            <h2>Add book <b-badge>New</b-badge></h2>
+        </div>
+        <div v-else>
+            <h2>Book <b-badge>Edit</b-badge></h2>
+        </div>
         <b-form @submit="onSubmit">
             <b-form-group id="input-group-title"
                           label="Title:"
@@ -69,9 +75,16 @@
                                  max-rows="6"></b-form-textarea>
             </b-form-group>
 
-            <b-button variant="primary" type="submit">Submit</b-button>
-            <b-button variant="danger" class="ml-1" type="reset">Reset</b-button>
-            <b-button variant="secondary" class="ml-1" @click='editMode()'>Back</b-button>
+            <div v-if="bookId == -1">
+                <b-button variant="primary" type="submit">Submit</b-button>
+                <b-button variant="danger" class="ml-1" type="reset">Reset</b-button>
+                <b-button variant="secondary" class="ml-1" to="/">Back</b-button>
+            </div>
+            <div v-else>
+                <b-button variant="primary" type="submit">Submit</b-button>
+                <b-button variant="danger" class="ml-1" type="reset">Reset</b-button>
+                <b-button variant="secondary" class="ml-1" @click='editMode()'>Back</b-button>
+            </div>
         </b-form>
     </div>
 </template>

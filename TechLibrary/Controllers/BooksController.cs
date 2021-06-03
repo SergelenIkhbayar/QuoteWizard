@@ -57,6 +57,18 @@ namespace TechLibrary.Controllers
             var paginationResponse = await _bookService.PaginationAsync(paginationRequest.PageNumber, paginationRequest.IsTitle, paginationRequest.SearchValue);
             return Ok(paginationResponse);
         }
+
+        [HttpPost("Save")]
+        public async Task<IActionResult> SaveBook(BookRequest bookRequest)
+        {
+            if (bookRequest == null || !ModelState.IsValid)
+                return BadRequest();
+
+            var bookResponse = await _bookService.SaveBook(bookRequest.BookId, bookRequest.Title,
+                bookRequest.ISBN, bookRequest.PublishedDate, bookRequest.ThumbnailUrl,
+                bookRequest.ShortDescr, bookRequest.LongDescr);
+            return Ok(bookResponse);
+        }
     }
 
     public class PaginationRequest
@@ -64,5 +76,16 @@ namespace TechLibrary.Controllers
         public int PageNumber { get; set; }
         public bool IsTitle { get; set; }
         public string SearchValue { get; set; }
+    }
+
+    public class BookRequest
+    {
+        public int BookId { get; set; }
+        public string Title { get; set; }
+        public string ISBN { get; set; }
+        public string PublishedDate { get; set; }
+        public string ThumbnailUrl { get; set; }
+        public string ShortDescr { get; set; }
+        public string LongDescr { get; set; }
     }
 }

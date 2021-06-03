@@ -16,6 +16,7 @@ namespace TechLibrary.Services
         Task<List<Book>> GetBooksAsync();
         Task<Book> GetBookByIdAsync(int bookid);
         Task<PaginationResponse> PaginationAsync(int pageNumber, bool isTitle, string searchString);
+        Task<BookResponse> SaveBook(int bookId, string title, string isbn, string publishedDate, string thumbnailUrl, string shortDesc, string longDescr);
     }
 
     public class BookService : IBookService
@@ -54,6 +55,24 @@ namespace TechLibrary.Services
             var books = totalBooks.Skip((pageNumber - 1) * 10).Take(10).ToList();
             var bookResponses = _mapper.Map<List<BookResponse>>(books);
             return new PaginationResponse(pageNumber, totalBooks.Count(), bookResponses);
+        }
+
+        public async Task<BookResponse> SaveBook(int bookId, string title, string isbn, string publishedDate, string thumbnailUrl, string shortDesc, string longDescr)
+        {
+            var book = await _dataContext.Books.SingleOrDefaultAsync(x => x.BookId == bookId);
+            if (book == null)
+            {
+                book = new Book();
+                _dataContext.Books.Add(book);
+            }
+            book.Title = title;
+            book.ISBN = isbn;
+            book.PublishedDate = publishedDate;
+            book.ThumbnailUrl = thumbnailUrl;
+            book.ShortDescr = shortDesc;
+            book.LongDescr = longDescr;
+            await _dataContext.SaveChangesAsync();
+            return _mapper.Map<BookResponse>(book);
         }
     }
 }
